@@ -2,4 +2,5 @@
 
 ## cmd
 
-- port: `netstat -tunlp`
+- check network: `ifconfig` (provided by net-tools)
+- check ports open: `netstat -tunlp`
