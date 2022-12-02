@@ -16,48 +16,52 @@ RUN sh -c "$(curl -L https://github.com/deluan/zsh-in-docker/releases/download/v
   -p https://github.com/zsh-users/zsh-completions
 
 # install java and hadoop
+WORKDIR /opt
+
 ARG HADOOP_ZIP=hadoop-3.1.3.tar.gz
 ARG JDK_ZIP=jdk-8u341-linux-x64.tar.gz
+ARG HBASE_ZIP=hbase-2.3.2-bin.tar.gz
 
-WORKDIR /opt
 COPY ./zip/${HADOOP_ZIP} .
 COPY ./zip/${JDK_ZIP} .
+COPY ./zip/${HBASE_ZIP} .
 RUN tar -zxf ${HADOOP_ZIP} && rm ${HADOOP_ZIP} \
-  && tar -zxf ${JDK_ZIP} && rm ${JDK_ZIP}
+  && tar -zxf ${JDK_ZIP} && rm ${JDK_ZIP} \
+  && tar -zxf ${HBASE_ZIP} && rm ${HBASE_ZIP}
 
 # config path and overrive some config file
 WORKDIR /root
 ENV JAVA_HOME=/opt/jdk1.8.0_341
 ENV HADOOP_HOME=/opt/hadoop-3.1.3
-ENV PATH=$PATH:$HOME/bin:$JAVA_HOME/bin:$HADOOP_HOME/bin
+ENV HBASE_HOME=/opt/hbase-2.3.2
+ENV PATH=$PATH:$HOME/bin:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HBASE_HOME/bin
 
 # copy to a absolute path to override
-COPY ./configs/core-site.xml ${HADOOP_HOME}/etc/hadoop/
-COPY ./configs/hdfs-site.xml ${HADOOP_HOME}/etc/hadoop/
-COPY ./configs/mapred-site.xml ${HADOOP_HOME}/etc/hadoop/
+COPY ./configs/hadoop/etc/hadoop/core-site.xml ${HADOOP_HOME}/etc/hadoop/
+COPY ./configs/hadoop/etc/hadoop/hdfs-site.xml ${HADOOP_HOME}/etc/hadoop/
+COPY ./configs/hadoop/etc/hadoop/mapred-site.xml ${HADOOP_HOME}/etc/hadoop/
+COPY ./configs/hbase/conf/hbase-site.xml ${HBASE_HOME}/conf/
 
 #
-# ENV doesn't work on ssh, so the following echo is necessary
+# only ENV doesn't work on ssh, so the following echo is necessary
 #
-# ENV HDFS_NAMENODE_USER=root
-# ENV HDFS_DATANODE_USER=root
-# ENV HDFS_SECONDARYNAMENODE_USER=root
-# ENV YARN_RESOURCEMANAGER_USER=root
-# ENV YARN_NODEMANAGER_USER=root
-RUN echo "JAVA_HOME=${JAVA_HOME}\nHDFS_NAMENODE_USER=root\nHDFS_DATANODE_USER=root\nHDFS_SECONDARYNAMENODE_USER=root\nYARN_RESOURCEMANAGER_USER=root\nYARN_NODEMANAGER_USER=root" >> ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
+RUN echo "\
+  JAVA_HOME=${JAVA_HOME}\n\
+  HDFS_NAMENODE_USER=root\n\
+  HDFS_DATANODE_USER=root\n\
+  HDFS_SECONDARYNAMENODE_USER=root\n\
+  YARN_RESOURCEMANAGER_USER=root\n\
+  YARN_NODEMANAGER_USER=root\n" >> ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
+RUN echo "\
+  export JAVA_HOME=${JAVA_HOME}\n\
+  export HBASE_CLASSPATH=${HADOOP_HOME}/etc/hadoop\n\
+  export HBASE_MANAGES_ZK=true\n\
+  export HBASE_DISABLE_HADOOP_CLASSPATH_LOOKUP=true\n" >> ${HBASE_HOME}/conf/hbase-env.sh
 
 # add hadoop user, but hadoop can run on root
 # RUN useradd -rm -d /home/hadoop -s /bin/zsh -g root -G sudo -u 1001 -p "$(openssl passwd -1 hadoop)" hadoop
 # USER hadoop
 # WORKDIR /home/hadoop
-
-# add ssh support, hadoop need no password ssh to localhost to start dfs and yarn service
-RUN echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
-RUN ssh-keygen -P '' -f ~/.ssh/id_rsa
-RUN cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-RUN chmod 0600 ~/.ssh/authorized_keys
-# RUN ssh-keyscan localhost >> ~/.ssh/known_hosts
-# RUN echo "hadoop:hadoop" | chpasswd
 
 # initialize hadoop
 RUN hdfs namenode -format
@@ -65,7 +69,10 @@ RUN hdfs namenode -format
 # run some init command
 COPY ./cmd ./cmd
 
-ENTRYPOINT service ssh restart \
+ENTRYPOINT ./cmd/init_once.sh \
+  && service ssh restart \
   && ${HADOOP_HOME}/sbin/start-dfs.sh \
+  && ${HBASE_HOME}/bin/start-hbase.sh \
   && cd cmd && ./init_all.sh && cd .. \
+  && jps \
   && zsh

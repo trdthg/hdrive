@@ -1,0 +1,14 @@
+create 'bigtable', 'cf1', 'cf2'
+list
+
+put 'bigtable', 'rk001', 'cf1:cid', 1001
+put 'bigtable', 'rk001', 'cf1:cname', 'zhangsan'
+put 'bigtable', 'rk001', 'cf2:caddress', 'beijing'
+
+get 'bigtable', 'rk001'
+get 'bigtable', 'rk001', 'cf1'
+
+get 'bigtable', 'rk001', {FILTER => "ValueFilter(=, 'binary:zhangsan')"}
+get 'bigtable', 'rk001', {COLUMN => 'cf1:cid'}
+get 'bigtable', 'rk001', {COLUMN => 'cf1:cname'}
+get 'bigtable', 'rk001', {COLUMN => 'cf2:caddress'}
