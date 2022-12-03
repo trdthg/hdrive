@@ -21,6 +21,9 @@ WORKDIR /opt
 ARG HADOOP_ZIP=hadoop-3.1.3.tar.gz
 ARG JDK_ZIP=jdk-8u341-linux-x64.tar.gz
 ARG HBASE_ZIP=hbase-2.3.2-bin.tar.gz
+ARG JDK_FOLDER=jdk1.8.0_341
+ARG HADOOP_FOLDER=hadoop-3.1.3
+ARG HBASE_FOLDER=hbase-2.3.2
 
 COPY ./zip/${HADOOP_ZIP} .
 COPY ./zip/${JDK_ZIP} .
@@ -31,9 +34,9 @@ RUN tar -zxf ${HADOOP_ZIP} && rm ${HADOOP_ZIP} \
 
 # config path and overrive some config file
 WORKDIR /root
-ENV JAVA_HOME=/opt/jdk1.8.0_341
-ENV HADOOP_HOME=/opt/hadoop-3.1.3
-ENV HBASE_HOME=/opt/hbase-2.3.2
+ENV JAVA_HOME=/opt/${JDK_FOLDER}
+ENV HADOOP_HOME=/opt/${HADOOP_FOLDER}
+ENV HBASE_HOME=/opt/${HBASE_FOLDER}
 ENV PATH=$PATH:$HOME/bin:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HBASE_HOME/bin
 
 # copy to a absolute path to override
