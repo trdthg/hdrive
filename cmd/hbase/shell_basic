@@ -1,10 +1,29 @@
+# create
 create 'bigtable', 'cf1', 'cf2'
+
+# list tables
 list
 
+# insert
 put 'bigtable', 'rk001', 'cf1:cid', 1001
 put 'bigtable', 'rk001', 'cf1:cname', 'zhangsan'
 put 'bigtable', 'rk001', 'cf2:caddress', 'beijing'
 
+put 'bigtable', 'rk002', 'cf1:cid', 1002
+put 'bigtable', 'rk002', 'cf1:cname', 'lisi'
+put 'bigtable', 'rk002', 'cf2:caddress', 'shanghai'
+
+put 'bigtable', 'rk003', 'cf1:cid', 1003
+put 'bigtable', 'rk003', 'cf1:cname', 'wangwu'
+put 'bigtable', 'rk003', 'cf2:caddress', 'shenzhen'
+
+# update
+put 'bigtable', 'rk001', 'cf2:caddress', 'beijing2'
+put 'bigtable', 'rk001', 'cf2:caddress', 'beijing3'
+put 'bigtable', 'rk001', 'cf2:caddress', 'beijing4'
+put 'bigtable', 'rk001', 'cf2:caddress', 'beijing5'
+
+# query
 get 'bigtable', 'rk001'
 get 'bigtable', 'rk001', 'cf1'
 
@@ -12,3 +31,32 @@ get 'bigtable', 'rk001', {FILTER => "ValueFilter(=, 'binary:zhangsan')"}
 get 'bigtable', 'rk001', {COLUMN => 'cf1:cid'}
 get 'bigtable', 'rk001', {COLUMN => 'cf1:cname'}
 get 'bigtable', 'rk001', {COLUMN => 'cf2:caddress'}
+
+# query many rows
+scan 'bigtable'
+scan 'bigtable', {FORMATTER => 'toString'}
+scan 'bigtable', {COLUMNS => 'cf1'}
+scan 'bigtable', {COLUMNS => ['cf1', 'cf2']}
+
+# set version number when create table
+create 'bigtable', {NAME => 'cf1', VERSIONS => 3}
+
+# query old version
+scan 'bigtable', {COLUMNS => 'cf2:caddress', VERSIONS => 3}
+
+# filter by column name
+scan 'bigtable', {COLUMNS => 'cf2', FILTER => "QualifierFilter(=, 'substring:addr')"}
+
+# range query
+scan 'bigtable', {COLUMNS => 'cf1', STARTROW => 'rk001', ENDROW => 'rk003'}
+
+# update version
+alter 'bigtable', NAME => 'cf2', VERSIONS => 5
+
+# count
+count 'bigtable'
+
+# delete
+delete 'bigtable', 'rk003', 'cf1:cname'
+deleteall 'bigtable', 'rk001'
+count 'bigtable'
