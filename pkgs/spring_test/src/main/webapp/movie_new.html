@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Bootstrap表格插件 - Bootstrap后台管理系统模版Ace下载</title>
+		<meta name="keywords" content="Bootstrap模版,Bootstrap模版下载,Bootstrap教程,Bootstrap中文" />
+		<meta name="description" content="站长素材提供Bootstrap模版,Bootstrap教程,Bootstrap中文翻译等相关Bootstrap插件下载" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,300" />
+		<link rel="stylesheet" href="assets/css/ace.min.css" />
+		<link rel="stylesheet" href="assets/css/ace-rtl.min.css" />
+		<link rel="stylesheet" href="assets/css/ace-skins.min.css" />
+		<script src="assets/js/ace-extra.min.js"></script>
+	</head>
+
+	<body>
+		<div class="navbar navbar-default" id="navbar">
+			<script type="text/javascript">
+				try{ace.settings.check('navbar' , 'fixed')}catch(e){}
+			</script>
+
+			<div class="navbar-container" id="navbar-container">
+				<div class="navbar-header pull-left">
+					<a href="#" class="navbar-brand">
+						<small>
+							<i class="icon-leaf"></i>
+							电影管理系统
+						</small>
+					</a>
+				</div>
+
+				<div class="navbar-header pull-right" role="navigation">
+					<ul class="nav ace-nav">
+						<li class="light-blue">
+							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+								<img class="nav-user-photo" src="assets/avatars/user.jpg" alt="Jason's Photo" />
+								<span class="user-info" id="username">
+									<small>欢迎</small>
+									Jason
+								</span>
+
+								<i class="icon-caret-down"></i>
+							</a>
+
+							<ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+								
+								<li>
+									<a href="#" onclick="logout()">
+										<i class="icon-off"></i>
+										退出登陆
+									</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="main-container" id="main-container">
+			<div class="main-container-inner">
+				<div class="sidebar" id="sidebar">
+					<ul class="nav nav-list">
+						<li >
+							<a href="movie_type.html">
+								<i class="icon-dashboard"></i>
+								<span class="menu-text"> 类型管理 </span>
+							</a>
+						</li>
+
+						<li class="active">
+							<a href="movie_new.html">
+								<i class="icon-film"></i>
+								<span class="menu-text"> 文件管理 </span>
+							</a>
+						</li>
+						<li >
+							<a href="movie_article.html">
+								<i class="icon-text-width"></i>
+								<span class="menu-text"> 文章管理 </span>
+							</a>
+						</li>
+						<li>
+							<a href="movie_pl.html">
+								<i class="icon-comment"></i>
+								<span class="menu-text"> 评论管理 </span>
+							</a>
+						</li>
+
+					</ul><!-- /.nav-list -->
+
+				</div>
+
+				<div class="main-content">
+
+					<div class="page-content">
+						<div class="page-header" style="height: 40px;">
+							<div id="" style="width: 50%;float: left;">
+								<h1>
+									类型
+								</h1>
+							</div>
+							<div id="" style="width: 50%;float: left;" align="right">
+								<button class="btn btn-xs btn-success" onclick="add()">上传文件</button>
+							</div>
+							
+						</div><!-- /.page-header -->
+
+						<div class="row">
+							<div class="col-xs-12">
+								<!-- PAGE CONTENT BEGINS -->
+
+								<div class="row">
+									<div class="col-xs-12">
+										<div class="table-responsive">
+											<table id="sample-table-1" class="table table-striped table-bordered table-hover">
+												
+												<thead>
+													<tr>
+														
+														<th>用户名</th>
+														<th>文件路径</th>
+														<th>操作</th>
+
+														<th></th>
+													</tr>
+												</thead>
+
+												<tbody id='con'>
+													
+
+												</tbody>
+											</table>
+										</div><!-- /.table-responsive -->
+									</div><!-- /span -->
+								</div><!-- /row -->
+                                
+								
+							</div><!-- /.col -->
+						</div><!-- /.row -->
+					</div><!-- /.page-content -->
+				</div><!-- /.main-content -->
+
+				
+			</div><!-- /.main-container-inner -->
+
+			<a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+				<i class="icon-double-angle-up icon-only bigger-110"></i>
+			</a>
+		
+
+		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title" id="myModalLabel"></h4>
+		      </div>
+		      <div class="modal-body" id="modal_body">
+		        <input type='text' value='' >
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+		        <button type="button" class="btn btn-primary" id="modal_save">保存</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+		
+		<script type="text/javascript">
+			window.jQuery || document.write("<script src='assets/js/jquery-2.0.3.min.js'>"+"<"+"/script>");
+		</script>
+
+		<script type="text/javascript">
+			if("ontouchend" in document) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+		</script>
+		<script src="assets/js/bootstrap.min.js"></script>
+		<script src="assets/js/typeahead-bs2.min.js"></script>
+		<script src="assets/js/jquery.dataTables.min.js"></script>
+		<script src="assets/js/jquery.dataTables.bootstrap.js"></script>
+		<script src="assets/js/ace-elements.min.js"></script>
+		<script src="assets/js/ace.min.js"></script>
+		<script src="js/bmob-min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			jQuery(function($) {
+
+				var parse = JSON.parse(localStorage.getItem("sinfo"));
+
+				if(parse==null){
+					window.location.href="movieview.do"
+				}
+				console.log(parse.sname)
+				$("#username").html(parse.sname)
+				console.log(parse.sname+"------------")
+
+				var oTable1 = $('#sample-table-2').dataTable( {
+					"aoColumns": [
+						{ "bSortable": false },
+						null, null,null, null, null,
+						{ "bSortable": false }
+					] } );
+
+
+				$('table th input:checkbox').on('click' , function(){
+					var that = this;
+					$(this).closest('table').find('tr > td:first-child input:checkbox')
+							.each(function(){
+								this.checked = that.checked;
+								$(this).closest('tr').toggleClass('selected');
+							});
+
+				});
+
+
+				$('[data-rel="tooltip"]').tooltip({placement: tooltip_placement});
+				function tooltip_placement(context, source) {
+					var $source = $(source);
+					var $parent = $source.closest('table')
+					var off1 = $parent.offset();
+					var w1 = $parent.width();
+
+					var off2 = $source.offset();
+					var w2 = $source.width();
+
+					if( parseInt(off2.left) < parseInt(off1.left) + parseInt(w1 / 2) ) return 'right';
+					return 'left';
+				}
+
+				$("#username").replaceWith("<span class='user-info' id='username'><small>欢迎</small>"+parse.sname+"</span>");
+
+				select();
+
+			})
+			function select(){
+
+				$.ajax({
+					url:"listfile.do",
+					type:"get",
+					data:"",
+					dataType:"json",
+					success:function (data) {
+						console.log(data)
+
+						for (let i = 0; i < data.length; i++) {
+
+							var datum = data[i];
+							var sinckname = datum.snickname;
+							var filepath = datum.filepath;
+
+
+							$("#con").append("<tr id='" + sinckname + "'>" +
+									"<td>" +
+									sinckname +
+									"</td>" +
+									"<td>" +
+									filepath +
+									"</td>" +
+									"<td>" +
+									"<div class='visible-md visible-lg hidden-sm hidden-xs btn-group'>" +
+									"<button class='btn btn-xs btn-info' onclick='update(\"" + sinckname + "\",\"" + filepath + "\")'>" +
+									"<i class='icon-edit bigger-120'></i>" +
+									"</button>" +
+									"<button class='btn btn-xs btn-danger' onclick='del(\"" + sinckname + "\",\"" + filepath + "\")'>" +
+									"<i class='icon-trash bigger-120'></i>" +
+									"</button>" +
+									"</div>" +
+									"</td>" +
+									"</tr>")
+
+						}
+
+					}
+				})
+
+				// var GameScore = Bmob.Object.extend("type");
+				// var query = new Bmob.Query(GameScore);
+				// // 查询所有数据
+				// query.find({
+				//   success: function(results) {
+				//   	$("#con").replaceWith("<tbody id='con'></tbody>")
+				//     for (var i = 0; i < results.length; i++) {
+				//       var object = results[i];
+				//       var id = object.id
+				//       var typeName = object.get('typeName')
+				//       $("#con").append("<tr id='"+id+"'>"+
+				// 						"<td>"+
+				// 							id+
+				// 						"</td>"+
+				// 						"<td>"+
+				// 							typeName+
+				// 						"</td>"+
+				// 						"<td>"+
+				// 							"<div class='visible-md visible-lg hidden-sm hidden-xs btn-group'>"+
+				// 								"<button class='btn btn-xs btn-info' onclick='update(\""+id+"\",\""+typeName+"\")'>"+
+				// 									"<i class='icon-edit bigger-120'></i>"+
+				// 								"</button>"+
+				// 								"<button class='btn btn-xs btn-danger' onclick='del(\""+id+"\")'>"+
+				// 									"<i class='icon-trash bigger-120'></i>"+
+				// 								"</button>"+
+				// 							"</div>"+
+				// 						"</td>"+
+				// 					"</tr>")
+				//
+				//     }
+				//   },
+				//   error: function(error) {
+				//     alert("查询失败: " + error.code + " " + error.message);
+				//   }
+				// });
+			}
+
+			function  like(){
+				var likename = $("#likeName").val();
+
+				$.ajax({
+					url:"likename.do",
+					type:"post",
+					data:{nickname: likename},
+					dataType:"json",
+					success:function (data){
+						$("#con").html("");
+						for (let i = 0; i < data.length; i++) {
+
+							var datum = data[i];
+							var sinckname = datum.snickname;
+							var sname = datum.sname;
+							var sgender = datum.sgender;
+							var spass = datum.spass;
+
+
+							$("#con").append("<tr id='"+sinckname+"'>"+
+									"<td>"+
+									sinckname+
+									"</td>"+
+									"<td>"+
+									sname+
+									"</td>"+
+									"<td>"+
+									sgender+
+									"</td>"+
+									"<td>"+
+									spass+
+									"</td>"+
+									"<td>"+
+									"<div class='visible-md visible-lg hidden-sm hidden-xs btn-group'>"+
+									"<button class='btn btn-xs btn-info' onclick='update(\""+sinckname+"\",\""+sname+"\",\""+sgender+"\",\""+spass+"\")'>"+
+									"<i class='icon-edit bigger-120'></i>"+
+									"</button>"+
+									"<button class='btn btn-xs btn-danger' onclick='del(\""+sinckname+"\")'>"+
+									"<i class='icon-trash bigger-120'></i>"+
+									"</button>"+
+									"</div>"+
+									"</td>"+
+									"</tr>")
+
+						}
+					}
+
+
+				})
+
+
+
+
+			}
+			function update(snickname,sname){
+				$("#myModalLabel").html("修改")
+				$("#modal_body").replaceWith("<div class='modal-body' id='modal_body'>"+
+						" 用户名:<input type='text' disabled='disabled' id='updateInputNickName' value='"+snickname+"'> <br/>"+
+						"路径:<input type='text' id='updateInputSname' value='"+sname+"'><br/>"+
+						"</div>")
+				$("#modal_save").replaceWith("<button type='button' class='btn btn-primary' id='modal_save' onclick='toupdate(\""+snickname+"\")'>保存</button>")
+				$('#myModal').modal('show')
+
+			}
+			function add(){
+				$("#myModalLabel").html("添加")
+				$("#modal_body").replaceWith("<div class='modal-body' id='modal_body'>"+
+						"<form id='form1'  method='post' enctype='multipart/form-data'>"+
+						"用户名<input type='text' id='addInputNick' name='snickname'> <br/>"+
+						"文件<input type='file' id='addInputFile' name='file'> "+
+						"</form>"+
+						"</div>")
+				$("#modal_save").replaceWith("<button type='button' class='btn btn-primary' id='modal_save' onclick='tosave()'>上传</button>")
+				$('#myModal').modal('show')
+			}
+			function del(id,filepath){
+				$.ajax({
+					url: "deletefile.do",
+					type:"post",
+					data:{snickname:id,filepath:filepath},
+					dataType: "json",
+					success:function (data){
+
+						if(data.flag){
+							$("#con").html("");
+							select();
+						}else {
+
+							alert("删除失败")
+						}
+
+					}
+				})
+
+				// var GameScore = Bmob.Object.extend("type");
+				// var query = new Bmob.Query(GameScore);
+				// query.get(id, {
+				//   success: function(gameScore) {
+				//     gameScore.destroy({
+				// 	  success: function(myObject) {
+				// 	    // 删除成功
+				// 	    select();
+				// 	  },
+				// 	  error: function(myObject, error) {
+				// 	    // 删除失败
+				// 	    alert("删除失败")
+				// 	  }
+				// 	});
+				//   },
+				//   error: function(object, error) {
+				//     // 查询失败
+				//   }
+				// });
+			}
+			function tosave(){
+
+
+				// $('#form1').submit(function(e) {
+					// e.preventDefault();
+
+					$.ajax({
+						url: 'fileupload.do',
+						data: new FormData(document.querySelector("#form1")),
+						processData: false,
+						contentType: false,
+						type: 'POST',
+						success: function (data) {
+							console.log(data)
+							// console.log(data.msg)
+							var parse = JSON.parse(data);
+							console.log(parse.msg)
+							if(parse.msg=="ok"){
+								$("#con").html("");
+								select()
+								$('#myModal').modal('hide')
+							}
+						},
+						error: function (data) {
+							alert(data);
+						}
+					});
+
+				// })
+
+			}
+			function toupdate(id){
+				var sname=$("#updateInputSname").val()
+
+				$.ajax({
+					url:"updatefile.do",
+					type:"post",
+					data:{snickname:id,filepath:sname},
+					dataType:"json",
+					success:function (data){
+
+						if(data.flag=="ok"){
+
+							$("#con").html("");
+							select();
+							$('#myModal').modal('hide')
+						}
+
+					}
+
+				})
+
+				// var GameScore = Bmob.Object.extend("type");
+				// var query = new Bmob.Query(GameScore);
+				// query.get(id, {
+				//     success: function(res) {
+				//       res.set('typeName', typeName);
+				//       res.save();
+				//       select();
+				//       $('#myModal').modal('hide')
+				//     },
+				//     error: function(object, error) {
+				//
+				//     }
+				// });
+
+			}
+
+			function  logout(){
+
+				localStorage.removeItem("sinfo");
+
+				window.location.href="logout.do";
+
+			}
+
+		</script>
+		
+</body>
+</html>

@@ -1,13 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-        <!-- 扫描 注解类 进入到 spring 容器中-->
-        <context:component-scan base-package="com.ly"/>
-        <!-- 配置试图解析器-->
-        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-                <property name="prefix" value="/"></property>
-                <property name="suffix" value=".jsp"></property>
-        </bean>
+    <!--  配置 注解-->
+    <context:component-scan base-package="com.ly"/>
+
+    <!-- 配置视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+
+        <property name="prefix" value="/"></property>
+        <property name="suffix" value=".html"></property>
+    </bean>
+
+    <!-- 是自定义的类型转换器生效-->
+    <mvc:annotation-driven>
+
+        <!--  解析 json 数据的转换器-->
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="defaultCharset" value="utf-8"></property>
+            </bean>
+
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json</value>
+                        <value>application/json;charset=utf-8</value>
+                        <value>application/atom+xml</value>
+                        <value>application/x-www-form-urlencoded</value>
+                        <value>application/octet-stream</value>
+                        <value>application/pdf</value>
+                        <value>application/rss+xml</value>
+                        <value>application/xhtml+xml</value>
+                        <value>application/xml</value>
+                        <value>image/gif</value>
+                        <value>image/jpeg</value>
+                        <value>image/png</value>
+                        <value>text/event-stream</value>
+                        <value>text/html</value>
+                        <value>text/markdown</value>
+                        <value>text/plain</value>
+                        <value>text/xml</value>
+                    </list>
+                </property>
+            </bean>
+
+
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <mvc:default-servlet-handler/>
+    <!--   返回视图的对象  是 json 数据-->
+    <bean id="FastJsonpResponseBodyAdvice" class="com.alibaba.fastjson.support.spring.FastJsonpResponseBodyAdvice">
+        <constructor-arg>
+            <list>
+                <value>callback</value>
+                <value>jsonp</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**/"/>
+            <bean class="com.ly.interceptor.LoginInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--  文件上传解析器-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"></bean>
 </beans>
