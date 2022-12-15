@@ -17,20 +17,23 @@ import java.util.List;
 @Controller
 public class StudentController {
 
-     @Autowired
+    @Autowired
     StudentService ss;
 
     // 登录的功能
     @RequestMapping("login.do")
     @ResponseBody
-    public  String  login(String nickname, String password, HttpSession session) throws IOException {
+    public String login(String nickname, String password, HttpSession session) throws IOException {
         String s = null;
-        Student student = ss.login(nickname, password);
-        if(student!=null){
-            session.setAttribute("stuinfo",student);
-            s = JSONObject.toJSONString(student);
+        System.out.println("User: " + nickname + " " + password);
 
-            return  s;
+        Student student = ss.login(nickname, password);
+        if (student != null) {
+            session.setAttribute("stuinfo", student);
+            s = JSONObject.toJSONString(student);
+            return s;
+        } else {
+            System.out.println("登录失败");
         }
 
         System.out.println(s);
@@ -38,41 +41,37 @@ public class StudentController {
     }
 
     @RequestMapping("movieview.do")
-    public  String  movieTypeView(){
-
+    public String movieTypeView() {
 
         return "movie_type";
     }
 
-
     @RequestMapping("list.do")
     @ResponseBody
-    public  String  showAllstus() throws IOException {
+    public String showAllstus() throws IOException {
 
         List<Student> students = ss.finAllStus();
 
         String s = JSONArray.toJSONString(students);
 
-        System.out.println(s+"===========");
+        System.out.println(s + "===========");
 
         return s;
     }
 
     @RequestMapping("delete.do")
     @ResponseBody
-    public  String  deleteStu(String snickname) throws IOException {
+    public String deleteStu(String snickname) throws IOException {
 
         boolean b = ss.deleteStuByNickName(snickname);
-      JSONObject jsonObject=new JSONObject();
+        JSONObject jsonObject = new JSONObject();
 
+        if (b) {
+            jsonObject.put("flag", "ok");
 
+        } else {
 
-        if(b){
-            jsonObject.put("flag","ok");
-
-        }else {
-
-            jsonObject.put("flag","failed");
+            jsonObject.put("flag", "failed");
         }
 
         return jsonObject.toJSONString();
@@ -81,27 +80,26 @@ public class StudentController {
 
     @RequestMapping("addStu.do")
     @ResponseBody
-    public  String  addStu(Student student){
+    public String addStu(Student student) {
 
         System.out.println(student);
         boolean b1 = ss.checkNicName(student.getSnickname());
-        System.out.println(b1+"=========");
-        JSONObject jsonObject=new JSONObject();
-        if(b1){
+        System.out.println(b1 + "=========");
+        JSONObject jsonObject = new JSONObject();
+        if (b1) {
             boolean b = ss.input(student);
-            if(b){
-                jsonObject.put("flag","ok");
+            if (b) {
+                jsonObject.put("flag", "ok");
 
-            }else {
+            } else {
 
-                jsonObject.put("flag","failed");
+                jsonObject.put("flag", "failed");
             }
 
-        }else {
+        } else {
 
-            jsonObject.put("flag","erroruserinfo");
+            jsonObject.put("flag", "erroruserinfo");
         }
-
 
         return jsonObject.toJSONString();
 
@@ -109,35 +107,34 @@ public class StudentController {
 
     @RequestMapping("update.do")
     @ResponseBody
-    public  String  updateStu(Student student){
+    public String updateStu(Student student) {
 
-        System.out.println(student+"==========");
+        System.out.println(student + "==========");
         boolean b1 = ss.input(student);
 
-        JSONObject jsonObject=new JSONObject();
-        if(b1){
+        JSONObject jsonObject = new JSONObject();
+        if (b1) {
             boolean b = ss.input(student);
-            if(b){
-                jsonObject.put("flag","ok");
+            if (b) {
+                jsonObject.put("flag", "ok");
 
-            }else {
+            } else {
 
-                jsonObject.put("flag","failed");
+                jsonObject.put("flag", "failed");
             }
 
         }
 
-        return  jsonObject.toJSONString();
+        return jsonObject.toJSONString();
     }
 
     // 模糊查询的方法
 
     @RequestMapping("likename.do")
     @ResponseBody
-    public  String likename(String nickname) throws IOException {
+    public String likename(String nickname) throws IOException {
 
         List<Student> students = ss.likeName(nickname);
-
 
         String s = JSONArray.toJSONString(students);
 
@@ -146,8 +143,8 @@ public class StudentController {
     }
 
     @RequestMapping("logout.do")
-    public  String  logout(HttpSession session){
-//         清空 session 中的数据
+    public String logout(HttpSession session) {
+        // 清空 session 中的数据
         session.invalidate();
         return "login";
     }

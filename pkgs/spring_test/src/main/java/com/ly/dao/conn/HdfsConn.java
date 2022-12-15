@@ -19,9 +19,10 @@ public class HdfsConn {
 
 	private HdfsConn() {
 		try {
+			initDNS.init();
 			configuration = new Configuration();
 			// configuration.set("fs.defaultFS", "hdfs://192.168.150.128:9000/");
-			fileSystem = FileSystem.get(new URI("hdfs://192.168.150.128:9000/"), configuration, "hadoop");
+			fileSystem = FileSystem.get(new URI("hdfs://127.0.0.1:9000"), configuration, "root");
 		} catch (IOException | URISyntaxException | InterruptedException e) {
 			e.printStackTrace();
 		}

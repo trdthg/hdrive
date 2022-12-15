@@ -17,9 +17,13 @@ public class HbaseConn {
 
     private HbaseConn() {
         try {
+            initDNS.init();
             configuration = HBaseConfiguration.create();
-            configuration.set("hbase.zookeeper.quorum", "192.168.150.128");
-            configuration.set("hbase.rootdir", "hdfs://192.168.150.128:9000/hbase/");
+            String host = "127.0.0.1";
+            configuration.set("hbase.zookeeper.quorum", host);
+            configuration.set("hbase.zookeeper.property.clientPort", "2181");
+            configuration.set("hbase.rootdir", "hdfs://" + host + ":9000/hbase");
+
             connection = ConnectionFactory.createConnection(configuration);
         } catch (Exception e) {
             e.printStackTrace();
